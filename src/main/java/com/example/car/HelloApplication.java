@@ -1,5 +1,6 @@
 package com.example.car;
 
+import javafx.animation.AnimationTimer;
 import javafx.animation.Interpolator;
 import javafx.animation.PathTransition;
 import javafx.animation.Timeline;
@@ -30,16 +31,26 @@ public class HelloApplication extends Application implements Initializable {
 
     @Override
     public void start(Stage stage) throws IOException {
-        final AudioClip clip = new AudioClip(this.getClass().getResource("horn.mp3").toExternalForm());
+        final AudioClip hornClip = new AudioClip(this.getClass().getResource("horn.mp3").toExternalForm());
+        final AudioClip crashClip = new AudioClip(this.getClass().getResource("crash.mp3").toExternalForm());
+
+        Rectangle rectangle1 = new Rectangle(0,0,40,40);
+        rectangle1.setArcHeight(10);
+        rectangle1.setArcWidth(10);
+        rectangle1.setFill(Color.RED);
+        Rectangle rectangle2 = new Rectangle(0,0,40,40);
+        rectangle2.setArcHeight(10);
+        rectangle2.setArcWidth(10);
+        rectangle2.setFill(Color.RED);
 
         ImageView image1 = new ImageView(new Image(getClass().getResourceAsStream("car2.png")));
-        image1.setFitHeight(50);
-        image1.setFitWidth(50);
+        image1.setFitHeight(70);
+        image1.setFitWidth(70);
         image1.setCursor(Cursor.HAND);
 
         ImageView image2 = new ImageView(new Image(getClass().getResourceAsStream("car.png")));
-        image2.setFitHeight(50);
-        image2.setFitWidth(50);
+        image2.setFitHeight(60);
+        image2.setFitWidth(60);
         image2.setCursor(Cursor.HAND);
 
         PathElement[] path = {
@@ -69,8 +80,10 @@ public class HelloApplication extends Application implements Initializable {
         PathTransition pathTransition1 = new PathTransition();
         pathTransition1.setDuration(Duration.millis(9000));
         pathTransition1.setPath(road);
-        pathTransition1.setNode(image1);
-        pathTransition1.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT); // keep the car perpendicular to its path
+        pathTransition1.setNode(rectangle1);
+        pathTransition1.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT); // keep the car
+                                                                                              // perpendicular to its
+                                                                                              // path
         pathTransition1.setInterpolator(Interpolator.LINEAR); // linear interpolator - smooth animation
         pathTransition1.setCycleCount(Timeline.INDEFINITE); // Let the animation run forever
         pathTransition1.setAutoReverse(false); // Reverse direction on alternating cycles
@@ -80,8 +93,10 @@ public class HelloApplication extends Application implements Initializable {
         PathTransition pathTransition2 = new PathTransition();
         pathTransition2.setDuration(Duration.millis(9000));
         pathTransition2.setPath(road);
-        pathTransition2.setNode(image2);
-        pathTransition2.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT); // keep the car perpendicular to its path
+        pathTransition2.setNode(rectangle2);
+        pathTransition2.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT); // keep the car
+                                                                                              // perpendicular to its
+                                                                                              // path
         pathTransition2.setInterpolator(Interpolator.LINEAR); // linear interpolator - smooth animation
         pathTransition2.setCycleCount(Timeline.INDEFINITE); // Let the animation run forever
         pathTransition2.setAutoReverse(false); // Reverse direction on alternating cycles
@@ -93,7 +108,7 @@ public class HelloApplication extends Application implements Initializable {
             public void handle(Event event) {
                 // pathTransition1.pause();
                 pathTransition1.setRate(pathTransition1.getRate() * -1);
-                clip.play();
+                hornClip.play();
             }
         });
 
@@ -102,21 +117,39 @@ public class HelloApplication extends Application implements Initializable {
             public void handle(Event event) {
                 // pathTransition2.pause();
                 pathTransition2.setRate(pathTransition2.getRate() * -1);
-                clip.play();
+                hornClip.play();
             }
         });
-       
-        if (image1.getBoundsInParent().intersects(image2.getBoundsInParent())) {
-            System.out.println("inter");
-        }
+
+        // if (image1.getX() == image2.getX() || image1.getX() == image2.getX() - 30
+        //         || image1.getX() == image2.getX() + 30) {
+        //     System.out.println("inter");
+        // }
+
+        // if (image1.intersects(image2.getBoundsInParent())) {
+        //     System.out.println("inter");
+        // }
+
+        AnimationTimer animationTimer = new AnimationTimer() {
+            @Override
+            public void handle(long l) {
+                if (rectangle1.getBoundsInParent().intersects(rectangle2.getBoundsInParent())) {       
+                    pathTransition1.setRate(pathTransition1.getRate() * -1);
+                    pathTransition2.setRate(pathTransition2.getRate() * -1);
+                    crashClip.play();
+                }
+            }
+        };
+        animationTimer.start();
 
         Group root = new Group();
-        root.getChildren().addAll(road, divider, image1, image2);
+        root.getChildren().addAll(road, divider, rectangle1, rectangle2);
         root.setLayoutX(100);
         root.setLayoutY(50);
 
         Scene scene = new Scene(root, 700, 400);
         stage.setTitle("Car Game");
+        stage.setResizable(false);
         stage.setScene(scene);
         stage.show();
 
