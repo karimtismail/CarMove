@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class HelloApplication extends Application implements Initializable {
+public class HelloApplication extends Application {
     // ImageView image1, image2;
     public static void main(String[] args) {
         launch();
@@ -78,7 +78,7 @@ public class HelloApplication extends Application implements Initializable {
         divider.getElements().addAll(path);
 
         PathTransition pathTransition1 = new PathTransition();
-        pathTransition1.setDuration(Duration.millis(9000));
+        pathTransition1.setDuration(Duration.millis(10000));
         pathTransition1.setPath(road);
         pathTransition1.setNode(image1);
         pathTransition1.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT); // keep the car perpendicular to its path
@@ -89,7 +89,7 @@ public class HelloApplication extends Application implements Initializable {
         pathTransition1.play();
 
         PathTransition pathTransition2 = new PathTransition();
-        pathTransition2.setDuration(Duration.millis(9000));
+        pathTransition2.setDuration(Duration.millis(14000));
         pathTransition2.setPath(road);
         pathTransition2.setNode(image2);
         pathTransition2.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT); // keep the car perpendicular to its path
@@ -139,11 +139,5 @@ public class HelloApplication extends Application implements Initializable {
         stage.setResizable(false);
         stage.setScene(scene);
         stage.show();
-
-    }
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-
     }
 }
